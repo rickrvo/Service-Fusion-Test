@@ -13,6 +13,11 @@
 		1DD7DD8421CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD8221CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld */; };
 		1DD7DD8621CB275700452286 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD8521CB275700452286 /* Assets.xcassets */; };
 		1DD7DD8921CB275700452286 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD8721CB275700452286 /* LaunchScreen.storyboard */; };
+		1DD7DD9221CC616300452286 /* default_avatar in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9121CC616300452286 /* default_avatar */; };
+		1DD7DD9421CC61FA00452286 /* PersonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */; };
+		1DD7DD9B21CC64CE00452286 /* PersonDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */; };
+		1DD7DD9D21CC676500452286 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9C21CC676500452286 /* back.png */; };
+		1DD7DD9F21CC68F300452286 /* edit.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9E21CC68F300452286 /* edit.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +29,11 @@
 		1DD7DD8521CB275700452286 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1DD7DD8821CB275700452286 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1DD7DD8A21CB275700452286 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1DD7DD9121CC616300452286 /* default_avatar */ = {isa = PBXFileReference; lastKnownFileType = file; path = default_avatar; sourceTree = "<group>"; };
+		1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonTableViewCell.swift; sourceTree = "<group>"; };
+		1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailsViewController.swift; sourceTree = "<group>"; };
+		1DD7DD9C21CC676500452286 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
+		1DD7DD9E21CC68F300452286 /* edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,14 +67,59 @@
 			isa = PBXGroup;
 			children = (
 				1DD7DD7B21CB275500452286 /* AppDelegate.swift */,
-				1DD7DD7D21CB275500452286 /* ViewController.swift */,
-				1DD7DD7F21CB275500452286 /* Main.storyboard */,
-				1DD7DD8521CB275700452286 /* Assets.xcassets */,
-				1DD7DD8721CB275700452286 /* LaunchScreen.storyboard */,
-				1DD7DD8A21CB275700452286 /* Info.plist */,
-				1DD7DD8221CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld */,
+				1DD7DD9721CC622700452286 /* View Controllers */,
+				1DD7DD9921CC627400452286 /* Views */,
+				1DD7DD9521CC620700452286 /* Storyboards */,
+				1DD7DD9021CC612400452286 /* Images */,
+				1DD7DD9821CC625400452286 /* Support Files */,
 			);
 			path = "Code Test Henrique Ormonde";
+			sourceTree = "<group>";
+		};
+		1DD7DD9021CC612400452286 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7DD9E21CC68F300452286 /* edit.png */,
+				1DD7DD9C21CC676500452286 /* back.png */,
+				1DD7DD9121CC616300452286 /* default_avatar */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		1DD7DD9521CC620700452286 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7DD8721CB275700452286 /* LaunchScreen.storyboard */,
+				1DD7DD7F21CB275500452286 /* Main.storyboard */,
+			);
+			name = Storyboards;
+			sourceTree = "<group>";
+		};
+		1DD7DD9721CC622700452286 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7DD7D21CB275500452286 /* ViewController.swift */,
+				1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		1DD7DD9821CC625400452286 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7DD8A21CB275700452286 /* Info.plist */,
+				1DD7DD8521CB275700452286 /* Assets.xcassets */,
+				1DD7DD8221CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld */,
+			);
+			name = "Support Files";
+			sourceTree = "<group>";
+		};
+		1DD7DD9921CC627400452286 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -126,8 +181,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1DD7DD8921CB275700452286 /* LaunchScreen.storyboard in Resources */,
+				1DD7DD9D21CC676500452286 /* back.png in Resources */,
+				1DD7DD9221CC616300452286 /* default_avatar in Resources */,
 				1DD7DD8621CB275700452286 /* Assets.xcassets in Resources */,
 				1DD7DD8121CB275500452286 /* Main.storyboard in Resources */,
+				1DD7DD9F21CC68F300452286 /* edit.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,8 +196,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DD7DD9B21CC64CE00452286 /* PersonDetailsViewController.swift in Sources */,
 				1DD7DD8421CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld in Sources */,
 				1DD7DD7E21CB275500452286 /* ViewController.swift in Sources */,
+				1DD7DD9421CC61FA00452286 /* PersonTableViewCell.swift in Sources */,
 				1DD7DD7C21CB275500452286 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
