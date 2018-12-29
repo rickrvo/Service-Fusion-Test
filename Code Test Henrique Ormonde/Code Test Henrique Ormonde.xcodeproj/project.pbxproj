@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D29D51221D698B6006E85D0 /* AddressTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51121D698B6006E85D0 /* AddressTableViewCell.swift */; };
+		1D29D51421D6A072006E85D0 /* NumberTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */; };
+		1D29D51621D6A084006E85D0 /* EmailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */; };
+		1D89036721CDE12400FD50D8 /* EditPersonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D89036621CDE12400FD50D8 /* EditPersonViewController.swift */; };
 		1DD7DD7C21CB275500452286 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD7B21CB275500452286 /* AppDelegate.swift */; };
 		1DD7DD7E21CB275500452286 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD7D21CB275500452286 /* ViewController.swift */; };
 		1DD7DD8121CB275500452286 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD7F21CB275500452286 /* Main.storyboard */; };
@@ -18,9 +22,15 @@
 		1DD7DD9B21CC64CE00452286 /* PersonDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */; };
 		1DD7DD9D21CC676500452286 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9C21CC676500452286 /* back.png */; };
 		1DD7DD9F21CC68F300452286 /* edit.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7DD9E21CC68F300452286 /* edit.png */; };
+		1DD7DDA121CD627000452286 /* TitleDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DDA021CD627000452286 /* TitleDetailTableViewCell.swift */; };
+		1DD7DDA321CD628A00452286 /* DetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DDA221CD628A00452286 /* DetailTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1D29D51121D698B6006E85D0 /* AddressTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressTableViewCell.swift; sourceTree = "<group>"; };
+		1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTableViewCell.swift; sourceTree = "<group>"; };
+		1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailTableViewCell.swift; sourceTree = "<group>"; };
+		1D89036621CDE12400FD50D8 /* EditPersonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPersonViewController.swift; sourceTree = "<group>"; };
 		1DD7DD7821CB275500452286 /* Code Test Henrique Ormonde.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Code Test Henrique Ormonde.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7DD7B21CB275500452286 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1DD7DD7D21CB275500452286 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -34,6 +44,8 @@
 		1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailsViewController.swift; sourceTree = "<group>"; };
 		1DD7DD9C21CC676500452286 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		1DD7DD9E21CC68F300452286 /* edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit.png; sourceTree = "<group>"; };
+		1DD7DDA021CD627000452286 /* TitleDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleDetailTableViewCell.swift; sourceTree = "<group>"; };
+		1DD7DDA221CD628A00452286 /* DetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +112,7 @@
 			children = (
 				1DD7DD7D21CB275500452286 /* ViewController.swift */,
 				1DD7DD9A21CC64CE00452286 /* PersonDetailsViewController.swift */,
+				1D89036621CDE12400FD50D8 /* EditPersonViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -118,6 +131,11 @@
 			isa = PBXGroup;
 			children = (
 				1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */,
+				1DD7DDA021CD627000452286 /* TitleDetailTableViewCell.swift */,
+				1DD7DDA221CD628A00452286 /* DetailTableViewCell.swift */,
+				1D29D51121D698B6006E85D0 /* AddressTableViewCell.swift */,
+				1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */,
+				1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -198,7 +216,13 @@
 			files = (
 				1DD7DD9B21CC64CE00452286 /* PersonDetailsViewController.swift in Sources */,
 				1DD7DD8421CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld in Sources */,
+				1DD7DDA321CD628A00452286 /* DetailTableViewCell.swift in Sources */,
 				1DD7DD7E21CB275500452286 /* ViewController.swift in Sources */,
+				1D29D51621D6A084006E85D0 /* EmailTableViewCell.swift in Sources */,
+				1D29D51421D6A072006E85D0 /* NumberTableViewCell.swift in Sources */,
+				1DD7DDA121CD627000452286 /* TitleDetailTableViewCell.swift in Sources */,
+				1D89036721CDE12400FD50D8 /* EditPersonViewController.swift in Sources */,
+				1D29D51221D698B6006E85D0 /* AddressTableViewCell.swift in Sources */,
 				1DD7DD9421CC61FA00452286 /* PersonTableViewCell.swift in Sources */,
 				1DD7DD7C21CB275500452286 /* AppDelegate.swift in Sources */,
 			);

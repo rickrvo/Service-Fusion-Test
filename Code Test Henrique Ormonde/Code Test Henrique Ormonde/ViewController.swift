@@ -16,6 +16,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var but_MoreOptions: UIButton!
     @IBOutlet weak var but_AddPerson: UIButton!
     @IBOutlet weak var txt_Search: UITextField!
+    @IBOutlet weak var lbl_NoContacts: UILabel!
+    
+    var peopleList: [Person]!
     
     
     override func viewDidLoad() {
@@ -26,63 +29,96 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let context = appDelegate.persistentContainer.viewContext
         
-//        Add People to phonebook
         
-        let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
-        
-        newPerson.setValue("Rick", forKey: "firstName")
-        
-        do {
-            try context.save()
-            
-            print("saved")
-            
-        } catch {
-            print("There was an error")
-        }
-        
-        
-//        Get People
+//        Get People List
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
-        
-        
-        request.predicate = NSPredicate(format: "firstName = %@", "Rick")
-        
-        
         request.returnsObjectsAsFaults = false
         
         do {
             let results = try context.fetch(request)
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
-                    if let userName = result.value(forKey: "firstName") as? String {
-                        print(userName)
-//                        To update value
-                        result.setValue("Rick2", forKey: "firstName")
-                        
-                        do{
-                            try context.save()
-                        } catch {
-                            print("update failed")
-                        }
-                    }
+                    peopleList?.append(result as! Person)
                 }
+                peopleTableView.reloadData()
+                peopleTableView.isHidden = false
+                lbl_NoContacts.isHidden = true
+            }
+            if results.count == 0 {
+                lbl_NoContacts.isHidden = false
+                peopleTableView.isHidden = true
             }
         } catch {
-            print("Error loading data")
+            print("Error loading people list")
         }
     }
 
-
+    
+    //    MARK: Button Actions
+    
+    @IBAction func addPersonTap(_ sender: Any) {
+        if(!isChangingView) {
+            isChangingView = true
+            
+            self.performSegue(withIdentifier: "addPersonSegue", sender: nil)
+            
+            isChangingView = false
+        }
+    }
+    
+    @IBAction func optionsTap(_ sender: Any) {
+    }
+    
     
     //    MARK: Table View Delegates
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return peopleList?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "personCell", for: indexPath) as! PersonTableViewCell
+        
+        cell.lbl_Name.text = peopleList[indexPath.row].firstName! + " " + peopleList[indexPath.row].lastName!
+        cell.img_Avatar.image = UIImage(data: peopleList[indexPath.row].image ?? (UIImage(named: "default_avatar")?.pngData())!)
+        
+        return cell
+    }
+    
+    var isChangingView : Bool = false
+    
+    internal func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if(!isChangingView) {
+            isChangingView = true
+            
+            let person = peopleList[indexPath.row]
+            self.performSegue(withIdentifier: "personSegue", sender: person)
+            
+            isChangingView = false
+        }
+    }
+    
+    //   MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+//        loaderActivity.isHidden = true
+        if segue.identifier == "personSegue"
+        {
+            if let destinationVC = segue.destination as? PersonDetailsViewController {
+                destinationVC.person = sender as? Person
+            }
+        }
+        
+        if segue.identifier == "addPersonSegue"
+        {
+            if let destinationVC = segue.destination as? EditPersonViewController {
+                destinationVC.person = nil
+            }
+        }
     }
 }
 
