@@ -10,6 +10,9 @@ import UIKit
 
 class TitleDetailTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var lbl_Title: UILabel!
+    @IBOutlet weak var lbl_Info: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -19,6 +22,13 @@ class TitleDetailTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+//        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 80))
+        
     }
 
 }

@@ -38,7 +38,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         super.viewDidAppear(animated)
         
         if ((person?.id) != nil) {
-            //             this is Edit mode
+            //   this is Edit mode
 
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
@@ -48,7 +48,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 let results = try context.fetch(request)
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
-                        
+                        person = result as? Person
                         if (result.value(forKey: "firstName") as? String) != nil {
                             txt_firstName.text = result.value(forKey: "firstName") as? String
                             //                            person?.firstName = result.value(forKey: "firstName") as? String
@@ -58,15 +58,15 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                             //                            person?.lastName = result.value(forKey: "lastName") as? String
                         }
                         if (result.value(forKey: "addresses") as? String) != nil {
-                            person?.addresses = result.value(forKey: "addresses") as? String
+//                            person?.addresses = result.value(forKey: "addresses") as? String
                             tableView_Address.reloadData()
                         }
                         if (result.value(forKey: "phoneNumbers") as? String) != nil {
-                            person?.phoneNumbers = result.value(forKey: "phoneNumbers") as? String
+//                            person?.phoneNumbers = result.value(forKey: "phoneNumbers") as? String
                             tableView_Number.reloadData()
                         }
                         if (result.value(forKey: "emails") as? String) != nil {
-                            person?.emails = result.value(forKey: "emails") as? String
+//                            person?.emails = result.value(forKey: "emails") as? String
                             tableView_Email.reloadData()
                         }
                         if (result.value(forKey: "birthDate") as? String) != nil {
@@ -76,7 +76,6 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                         if (result.value(forKey: "image") as? UIImage) != nil {
                             img_Avatar.image = result.value(forKey: "image") as? UIImage
                         }
-                        person = result as? Person
                     }
                 }
             } catch {
@@ -96,7 +95,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             newPerson.setValue("", forKey: "addresses")
             newPerson.setValue("", forKey: "phoneNumbers")
             newPerson.setValue("", forKey: "emails")
-            newPerson.setValue(nil, forKey: "birthDate")
+            newPerson.setValue(Date(), forKey: "birthDate")
             newPerson.setValue(nil, forKey: "image")
             person = newPerson as? Person
             do {
@@ -113,7 +112,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         if ((person?.id) != nil) {
             if (((txt_firstName?.text) != nil) || txt_firstName?.text == "") || (((txt_lastName?.text) != nil) || txt_lastName?.text == "") {
                 // person created successfully
-                print("person created successfully")
+                print("person edited successfully")
             } else {
                 
                 let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
@@ -140,58 +139,15 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         self.navigationController?.popViewController(animated: true)
     }
-    
-    func savePerson() {
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
-        let context = appDelegate.persistentContainer.viewContext
-    
-        //        Add People to phonebook
-    
-        let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
-    
-        newPerson.setValue("Rick", forKey: "firstName")
-    
-        do {
-            try context.save()
-    
-            print("saved")
-    
-        } catch {
-            print("There was an error")
-        }
-        
-        //        Get People
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
-        request.returnsObjectsAsFaults = false
-        
-        //        request.predicate = NSPredicate(format: "firstName = %@", "Rick")
-        
-        
-        do {
-            let results = try context.fetch(request)
-            if results.count > 0 {
-                for result in results as! [NSManagedObject] {
-                    
-                    if let userName = result.value(forKey: "firstName") as? String {
-                        print(userName)
-    //                        To update value
-                        result.setValue("Rick2", forKey: "firstName")
-
-                        do{
-                            try context.save()
-                        } catch {
-                            print("update failed")
-                        }
-                    }
-                }
-            }
-        } catch {
-            print("Error loading data")
-        }
+ 
+    @IBAction func background_Tap(_ sender: Any) {
+        self.view.endEditing(true)
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
     // MARK: Text Field Delegates
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -213,25 +169,17 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 let results = try context.fetch(request)
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
+
+                        result.setValue(textField.text, forKey: "firstName")
                         
-                        if let userName = result.value(forKey: "firstName") as? String {
-                            print(userName)
-                            //                        To update value
-                            result.setValue(textField.text, forKey: "firstName")
-                            
-                            do{
-                                try context.save()
-                                print("update firstName successfull")
-                            } catch {
-                                print("update failed")
-                            }
+                        do {
+                            try context.save()
+                            person = result as? Person
+                            print("update firstName successfull")
+                        } catch {
+                            print("update failed")
                         }
                     }
-                } else {
-                    let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
-                    
-                    newPerson.setValue(textField.text, forKey: "firstName")
-                    // TODO: add other values
                 }
             } catch {
                 print("Error loading data")
@@ -258,28 +206,53 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
                         
-                        if let userName = result.value(forKey: "lastName") as? String {
-                            print(userName)
-                            //                        To update value
-                            result.setValue(textField.text, forKey: "lastName")
-                            
-                            do{
-                                try context.save()
-                                print("update firstName successfull")
-                            } catch {
-                                print("update failed")
-                            }
+                        result.setValue(textField.text, forKey: "lastName")
+                        
+                        do {
+                            try context.save()
+                            person = result as? Person
+                            print("update lastName successfull")
+                        } catch {
+                            print("update failed")
                         }
                     }
-                } else {
-                    let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
-                    
-                    newPerson.setValue(textField.text, forKey: "lastName")
-                    // TODO add other values
                 }
             } catch {
                 print("Error loading data")
             }
+        }
+        
+        self.view.endEditing(true)
+    }
+    
+    
+//    MARK: Date Action
+    
+    @IBAction func birthDay_Change(_ sender: Any) {
+        
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+        request.returnsObjectsAsFaults = false
+        
+        request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+        
+        do {
+            let results = try context.fetch(request)
+            if results.count > 0 {
+                for result in results as! [NSManagedObject] {
+                        
+                    result.setValue(date_birthDay.date, forKey: "birthDate")
+                    
+                    do{
+                        try context.save()
+                        person = result as? Person
+                        print("update birthday successfull")
+                    } catch {
+                        print("update failed")
+                    }
+                }
+            }
+        } catch {
+            print("Error saving birthDate")
         }
     }
     

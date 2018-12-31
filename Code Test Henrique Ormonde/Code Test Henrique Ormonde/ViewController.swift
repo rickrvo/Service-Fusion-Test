@@ -39,7 +39,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         do {
             let results = try context.fetch(request)
-            peopleList.removeAll()
+            if peopleList == nil {
+                peopleList = [Person]()
+            } else {
+                peopleList.removeAll()
+            }
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
                     peopleList?.append(result as! Person)
