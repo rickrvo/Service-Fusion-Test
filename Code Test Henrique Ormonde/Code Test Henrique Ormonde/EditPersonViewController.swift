@@ -12,6 +12,7 @@ import CoreData
 class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
 
     var person: Person?
+    var context: NSManagedObjectContext!
     
     @IBOutlet weak var img_Avatar: UIImageView!
     @IBOutlet weak var but_Avatar: UIButton!
@@ -29,10 +30,113 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.context = appDelegate.persistentContainer.viewContext
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if ((person?.id) != nil) {
+            //             this is Edit mode
+
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+            
+            do {
+                let results = try context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        if (result.value(forKey: "firstName") as? String) != nil {
+                            txt_firstName.text = result.value(forKey: "firstName") as? String
+                            //                            person?.firstName = result.value(forKey: "firstName") as? String
+                        }
+                        if (result.value(forKey: "lastName") as? String) != nil {
+                            txt_lastName.text = result.value(forKey: "lastName") as? String
+                            //                            person?.lastName = result.value(forKey: "lastName") as? String
+                        }
+                        if (result.value(forKey: "addresses") as? String) != nil {
+                            person?.addresses = result.value(forKey: "addresses") as? String
+                            tableView_Address.reloadData()
+                        }
+                        if (result.value(forKey: "phoneNumbers") as? String) != nil {
+                            person?.phoneNumbers = result.value(forKey: "phoneNumbers") as? String
+                            tableView_Number.reloadData()
+                        }
+                        if (result.value(forKey: "emails") as? String) != nil {
+                            person?.emails = result.value(forKey: "emails") as? String
+                            tableView_Email.reloadData()
+                        }
+                        if (result.value(forKey: "birthDate") as? String) != nil {
+                            //                            person?.birthDate = result.value(forKey: "birthDate") as? Date
+                            date_birthDay.date = result.value(forKey: "birthDate") as? Date ?? Date()
+                        }
+                        if (result.value(forKey: "image") as? UIImage) != nil {
+                            img_Avatar.image = result.value(forKey: "image") as? UIImage
+                        }
+                        person = result as? Person
+                    }
+                }
+            } catch {
+                print("Error loading data")
+            }
+            
+        } else {
+            let count: Int = UserDefaults.standard.integer(forKey: "Autocount")
+            UserDefaults.standard.set(count+1, forKey: "Autocount")
+            UserDefaults.standard.synchronize()
+            
+            let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
+            
+            newPerson.setValue(Int32(count.advanced(by: 1)), forKey: "id")
+            newPerson.setValue("", forKey: "firstName")
+            newPerson.setValue("", forKey: "lastName")
+            newPerson.setValue("", forKey: "addresses")
+            newPerson.setValue("", forKey: "phoneNumbers")
+            newPerson.setValue("", forKey: "emails")
+            newPerson.setValue(nil, forKey: "birthDate")
+            newPerson.setValue(nil, forKey: "image")
+            person = newPerson as? Person
+            do {
+                try context.save()
+            } catch {
+                print("Error saving newPerson")
+            }
+        }
+        
     }
     
     @IBAction func but_BackTap(_ sender: Any) {
+        
+        if ((person?.id) != nil) {
+            if (((txt_firstName?.text) != nil) || txt_firstName?.text == "") || (((txt_lastName?.text) != nil) || txt_lastName?.text == "") {
+                // person created successfully
+                print("person created successfully")
+            } else {
+                
+                let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+                request.returnsObjectsAsFaults = false
+                
+                request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+                
+                do {
+                    let results = try context.fetch(request)
+                    if results.count > 0 {
+                        for result in results as! [NSManagedObject] {
+                            
+                            if (result.value(forKey: "id") as? String) != nil {
+                                context.delete(result)
+                                print("discard person successfull")
+                            }
+                        }
+                    }
+                } catch {
+                    print("Error loading empty person")
+                }
+            }
+        }
         
         self.navigationController?.popViewController(animated: true)
     }
@@ -92,16 +196,90 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.tag == 1 {
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
+            if textField.text == "" || textField.text == nil {
+                let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                textField.becomeFirstResponder()
+                return
+            }
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
             
-            let context = appDelegate.persistentContainer.viewContext
+            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
             
-            let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
+            do {
+                let results = try context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        if let userName = result.value(forKey: "firstName") as? String {
+                            print(userName)
+                            //                        To update value
+                            result.setValue(textField.text, forKey: "firstName")
+                            
+                            do{
+                                try context.save()
+                                print("update firstName successfull")
+                            } catch {
+                                print("update failed")
+                            }
+                        }
+                    }
+                } else {
+                    let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
+                    
+                    newPerson.setValue(textField.text, forKey: "firstName")
+                    // TODO: add other values
+                }
+            } catch {
+                print("Error loading data")
+            }
             
-            newPerson.setValue("Rick", forKey: "firstName")
             
-        } else {
+        } else if textField.tag == 2 {
             
+            if textField.text == "" || textField.text == nil {
+                let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                textField.becomeFirstResponder()
+                return
+            }
+
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            
+            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+            
+            do {
+                let results = try context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        if let userName = result.value(forKey: "lastName") as? String {
+                            print(userName)
+                            //                        To update value
+                            result.setValue(textField.text, forKey: "lastName")
+                            
+                            do{
+                                try context.save()
+                                print("update firstName successfull")
+                            } catch {
+                                print("update failed")
+                            }
+                        }
+                    }
+                } else {
+                    let newPerson = NSEntityDescription.insertNewObject(forEntityName: "Person", into: context)
+                    
+                    newPerson.setValue(textField.text, forKey: "lastName")
+                    // TODO add other values
+                }
+            } catch {
+                print("Error loading data")
+            }
         }
     }
     
@@ -110,14 +288,39 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     
     @IBAction func but_addAddress_Tap(_ sender: Any) {
         
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "addPopUpID") as! AddPopUpViewController
+        
+        popupVC.person = person
+        popupVC.option = "address"
+        
+        self.addChild(popupVC)
+        popupVC.view.frame = self.view.frame
+        self.view.addSubview(popupVC.view)
+        popupVC.didMove(toParent: self)
     }
     
     @IBAction func but_addNumber_Tap(_ sender: Any) {
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "addPopUpID") as! AddPopUpViewController
         
+        popupVC.person = person
+        popupVC.option = "number"
+        
+        self.addChild(popupVC)
+        popupVC.view.frame = self.view.frame
+        self.view.addSubview(popupVC.view)
+        popupVC.didMove(toParent: self)
     }
     
     @IBAction func but_addEmail_Tap(_ sender: Any) {
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "addPopUpID") as! AddPopUpViewController
         
+        popupVC.person = person
+        popupVC.option = "email"
+        
+        self.addChild(popupVC)
+        popupVC.view.frame = self.view.frame
+        self.view.addSubview(popupVC.view)
+        popupVC.didMove(toParent: self)
     }
     
     //  MARK: Table View Delegates

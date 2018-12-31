@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var lbl_NoContacts: UILabel!
     
     var peopleList: [Person]!
-    
+    var context: NSManagedObjectContext!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,8 +27,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
-        let context = appDelegate.persistentContainer.viewContext
-        
+        self.context = appDelegate.persistentContainer.viewContext
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
 //        Get People List
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
@@ -36,6 +39,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         do {
             let results = try context.fetch(request)
+            peopleList.removeAll()
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
                     peopleList?.append(result as! Person)
