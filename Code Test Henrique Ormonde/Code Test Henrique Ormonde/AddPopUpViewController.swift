@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol AddPopUpViewControllerDelegate: class {
-    func addedOptionSuccessfull(option: String)
+    func addedOptionSuccessfull(option: String, contact: Person)
 }
 
 class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -76,7 +76,7 @@ class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
                                 }
                                 try context.save()
                                 person = result as? Person
-                                delegate?.addedOptionSuccessfull(option: "address")
+                                delegate?.addedOptionSuccessfull(option: "address", contact: person)
                             } catch {
                                 print("error adding address")
                             }
@@ -94,7 +94,7 @@ class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
                                 }
                                 try context.save()
                                 person = result as? Person
-                                delegate?.addedOptionSuccessfull(option: "number")
+                                delegate?.addedOptionSuccessfull(option: "number", contact: person)
                                 
                             } catch {
                                 print("error adding phoneNumbers")
@@ -113,7 +113,7 @@ class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
                                 }
                                 try context.save()
                                 person = result as? Person
-                                delegate?.addedOptionSuccessfull(option: "email")
+                                delegate?.addedOptionSuccessfull(option: "email", contact: person)
                             } catch {
                                 print("error adding emails")
                             }

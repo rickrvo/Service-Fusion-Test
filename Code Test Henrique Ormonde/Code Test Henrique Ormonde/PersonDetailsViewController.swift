@@ -112,6 +112,7 @@ class PersonDetailsViewController: UIViewController, UITableViewDelegate, UITabl
         {
             if let destinationVC = segue.destination as? EditPersonViewController {
                 destinationVC.person = person
+                destinationVC.delegate = self
             }
         }
     }

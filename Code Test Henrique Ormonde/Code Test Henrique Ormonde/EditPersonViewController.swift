@@ -20,7 +20,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     var person: Person?
     var context: NSManagedObjectContext!
     let imagePicker = UIImagePickerController()
-    weak var delegate: AddPopUpViewControllerDelegate?
+    weak var delegate: EditPersonViewControllerDelegate?
     
     @IBOutlet weak var img_Avatar: UIImageView!
     @IBOutlet weak var but_Avatar: UIButton!
@@ -189,6 +189,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                         do {
                             try context.save()
                             person = result as? Person
+                            delegate?.userUpdated(contact: person!)
                             print("update firstName successfull")
                         } catch {
                             print("update failed")
@@ -225,6 +226,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                         do {
                             try context.save()
                             person = result as? Person
+                            delegate?.userUpdated(contact: person!)
                             print("update lastName successfull")
                         } catch {
                             print("update failed")
@@ -259,6 +261,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                     do{
                         try context.save()
                         person = result as? Person
+                        delegate?.userUpdated(contact: person!)
                         print("update birthday successfull")
                     } catch {
                         print("update failed")
@@ -359,6 +362,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                             do{
                                 try self.context.save()
                                 self.person = result as? Person
+                                self.delegate?.userUpdated(contact: self.person!)
                                 print("update birthday successfull")
                             } catch {
                                 print("update failed")
@@ -428,7 +432,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     
     //  MARK: AddPopUp Delegates
     
-    func addedOptionSuccessfull(option: String) {
+    func addedOptionSuccessfull(option: String, contact: Person) {
         if(option == "address") {
             self.tableView_Address.reloadData()
         } else if(option == "number") {
@@ -436,6 +440,8 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         } else if(option == "email") {
             self.tableView_Email.reloadData()
         }
+        person = contact
+        delegate?.userUpdated(contact: contact)
     }
     
 //    override func viewWillLayoutSubviews() {
