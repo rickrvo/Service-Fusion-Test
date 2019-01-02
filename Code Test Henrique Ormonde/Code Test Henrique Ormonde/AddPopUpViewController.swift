@@ -9,11 +9,17 @@
 import UIKit
 import CoreData
 
-class AddPopUpViewController: UIViewController {
+protocol AddPopUpViewControllerDelegate: class {
+    func addedOptionSuccessfull(option: String)
+}
+
+class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
 
     var person: Person!
     var option: String!
+    weak var delegate: AddPopUpViewControllerDelegate?
     
+    @IBOutlet var view_backgroundTransparent: UIView!
     @IBOutlet weak var view_backGround: UIView!
     @IBOutlet weak var lbl_title: UILabel!
     @IBOutlet weak var txt_value: UITextField!
@@ -69,7 +75,8 @@ class AddPopUpViewController: UIViewController {
                                     result.setValue(adrstr, forKey: "addresses")
                                 }
                                 try context.save()
-                                
+                                person = result as? Person
+                                delegate?.addedOptionSuccessfull(option: "address")
                             } catch {
                                 print("error adding address")
                             }
@@ -86,6 +93,8 @@ class AddPopUpViewController: UIViewController {
                                     result.setValue(adrstr, forKey: "phoneNumbers")
                                 }
                                 try context.save()
+                                person = result as? Person
+                                delegate?.addedOptionSuccessfull(option: "number")
                                 
                             } catch {
                                 print("error adding phoneNumbers")
@@ -103,7 +112,8 @@ class AddPopUpViewController: UIViewController {
                                     result.setValue(adrstr, forKey: "emails")
                                 }
                                 try context.save()
-                                
+                                person = result as? Person
+                                delegate?.addedOptionSuccessfull(option: "email")
                             } catch {
                                 print("error adding emails")
                             }
@@ -144,6 +154,14 @@ class AddPopUpViewController: UIViewController {
     @IBAction func background_Tap(_ sender: Any) {
         self.removeAnimate()
     }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view == view_backgroundTransparent {
+            return true
+        }
+        return false
+    }
+
     
     /*
     // MARK: - Navigation

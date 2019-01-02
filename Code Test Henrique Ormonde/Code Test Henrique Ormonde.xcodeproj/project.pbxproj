@@ -11,6 +11,7 @@
 		1D29D51421D6A072006E85D0 /* NumberTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */; };
 		1D29D51621D6A084006E85D0 /* EmailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */; };
 		1D29D51821D94D86006E85D0 /* AddPopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D29D51721D94D86006E85D0 /* AddPopUpViewController.swift */; };
+		1D2D8B9F21DC128C0001167C /* ContentFittingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2D8B9E21DC128C0001167C /* ContentFittingTableView.swift */; };
 		1D89036721CDE12400FD50D8 /* EditPersonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D89036621CDE12400FD50D8 /* EditPersonViewController.swift */; };
 		1DD7DD7C21CB275500452286 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD7B21CB275500452286 /* AppDelegate.swift */; };
 		1DD7DD7E21CB275500452286 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7DD7D21CB275500452286 /* ViewController.swift */; };
@@ -32,6 +33,7 @@
 		1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTableViewCell.swift; sourceTree = "<group>"; };
 		1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailTableViewCell.swift; sourceTree = "<group>"; };
 		1D29D51721D94D86006E85D0 /* AddPopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPopUpViewController.swift; sourceTree = "<group>"; };
+		1D2D8B9E21DC128C0001167C /* ContentFittingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentFittingTableView.swift; sourceTree = "<group>"; };
 		1D89036621CDE12400FD50D8 /* EditPersonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPersonViewController.swift; sourceTree = "<group>"; };
 		1DD7DD7821CB275500452286 /* Code Test Henrique Ormonde.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Code Test Henrique Ormonde.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7DD7B21CB275500452286 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -133,12 +135,13 @@
 		1DD7DD9921CC627400452286 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */,
-				1DD7DDA021CD627000452286 /* TitleDetailTableViewCell.swift */,
-				1DD7DDA221CD628A00452286 /* DetailTableViewCell.swift */,
+				1D2D8B9E21DC128C0001167C /* ContentFittingTableView.swift */,
 				1D29D51121D698B6006E85D0 /* AddressTableViewCell.swift */,
 				1D29D51321D6A072006E85D0 /* NumberTableViewCell.swift */,
 				1D29D51521D6A084006E85D0 /* EmailTableViewCell.swift */,
+				1DD7DD9321CC61FA00452286 /* PersonTableViewCell.swift */,
+				1DD7DDA021CD627000452286 /* TitleDetailTableViewCell.swift */,
+				1DD7DDA221CD628A00452286 /* DetailTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				1DD7DD8421CB275500452286 /* Code_Test_Henrique_Ormonde.xcdatamodeld in Sources */,
 				1DD7DDA321CD628A00452286 /* DetailTableViewCell.swift in Sources */,
 				1D29D51821D94D86006E85D0 /* AddPopUpViewController.swift in Sources */,
+				1D2D8B9F21DC128C0001167C /* ContentFittingTableView.swift in Sources */,
 				1DD7DD7E21CB275500452286 /* ViewController.swift in Sources */,
 				1D29D51621D6A084006E85D0 /* EmailTableViewCell.swift in Sources */,
 				1D29D51421D6A072006E85D0 /* NumberTableViewCell.swift in Sources */,

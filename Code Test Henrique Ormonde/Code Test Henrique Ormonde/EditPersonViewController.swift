@@ -9,10 +9,18 @@
 import UIKit
 import CoreData
 
-class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
+
+protocol EditPersonViewControllerDelegate: class {
+    func userUpdated(contact: Person)
+}
+
+
+class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, AddPopUpViewControllerDelegate{
 
     var person: Person?
     var context: NSManagedObjectContext!
+    let imagePicker = UIImagePickerController()
+    weak var delegate: AddPopUpViewControllerDelegate?
     
     @IBOutlet weak var img_Avatar: UIImageView!
     @IBOutlet weak var but_Avatar: UIButton!
@@ -22,6 +30,8 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     @IBOutlet weak var but_addAddress: UIButton!
     @IBOutlet weak var tableView_Address: UITableView!
     @IBOutlet weak var but_addNumber: UIButton!
+    @IBOutlet weak var view_Address: UIView!
+    @IBOutlet weak var stack_Address: UIStackView!
     @IBOutlet weak var tableView_Number: UITableView!
     @IBOutlet weak var but_addEmail: UIButton!
     @IBOutlet weak var tableView_Email: UITableView!
@@ -69,12 +79,12 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
 //                            person?.emails = result.value(forKey: "emails") as? String
                             tableView_Email.reloadData()
                         }
-                        if (result.value(forKey: "birthDate") as? String) != nil {
+                        if (result.value(forKey: "birthDate") as? Date) != nil {
                             //                            person?.birthDate = result.value(forKey: "birthDate") as? Date
                             date_birthDay.date = result.value(forKey: "birthDate") as? Date ?? Date()
                         }
-                        if (result.value(forKey: "image") as? UIImage) != nil {
-                            img_Avatar.image = result.value(forKey: "image") as? UIImage
+                        if (result.value(forKey: "image") as? Data) != nil {
+                            img_Avatar.image = UIImage(data: (result.value(forKey: "image") as? Data)!)
                         }
                     }
                 }
@@ -103,6 +113,8 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             } catch {
                 print("Error saving newPerson")
             }
+            
+            self.img_Avatar.image = UIImage(named: "default_avatar")
         }
         
     }
@@ -144,11 +156,13 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         self.view.endEditing(true)
     }
     
+    
+    // MARK: Text Field Delegates
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
-    // MARK: Text Field Delegates
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.tag == 1 {
@@ -265,6 +279,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         popupVC.person = person
         popupVC.option = "address"
+        popupVC.delegate = self
         
         self.addChild(popupVC)
         popupVC.view.frame = self.view.frame
@@ -277,6 +292,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         popupVC.person = person
         popupVC.option = "number"
+        popupVC.delegate = self
         
         self.addChild(popupVC)
         popupVC.view.frame = self.view.frame
@@ -289,12 +305,86 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         popupVC.person = person
         popupVC.option = "email"
+        popupVC.delegate = self
         
         self.addChild(popupVC)
         popupVC.view.frame = self.view.frame
         self.view.addSubview(popupVC.view)
         popupVC.didMove(toParent: self)
     }
+    
+    var isOpeningImage: Bool = false
+    @IBAction func but_Avatar_Tap(_ sender: Any) {
+        imagePicker.delegate = self
+        imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
+        if (!isOpeningImage) {
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
+    //  MARK: Image Picker Delegates
+    
+    func fixOrientation(img: UIImage) -> UIImage {
+        if (img.imageOrientation == .up) {
+            return img
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(img.size, false, img.scale)
+        let rect = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
+        img.draw(in: rect)
+        
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        return normalizedImage
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            DispatchQueue.main.async() {
+                self.img_Avatar?.image = self.fixOrientation(img: image)
+                
+                let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+                request.returnsObjectsAsFaults = false
+                
+                request.predicate = NSPredicate(format: "id = %@", String(self.person!.id))
+                
+                do {
+                    let results = try self.context.fetch(request)
+                    if results.count > 0 {
+                        for result in results as! [NSManagedObject] {
+                            
+                            result.setValue(self.fixOrientation(img: image).pngData(), forKey: "image")
+                            
+                            do{
+                                try self.context.save()
+                                self.person = result as? Person
+                                print("update birthday successfull")
+                            } catch {
+                                print("update failed")
+                            }
+                        }
+                    }
+                } catch {
+                    print("Error saving birthDate")
+                }
+            }
+        } else {
+            isOpeningImage = false
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        isOpeningImage = false
+        dismiss(animated: true, completion: nil)
+//        DispatchQueue.main.async {
+//            self.loaderActivity.isHidden = true
+//        }
+    }
+
+    
+    
     
     //  MARK: Table View Delegates
     
@@ -334,6 +424,39 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         return UITableViewCell()
     }
+    
+    
+    //  MARK: AddPopUp Delegates
+    
+    func addedOptionSuccessfull(option: String) {
+        if(option == "address") {
+            self.tableView_Address.reloadData()
+        } else if(option == "number") {
+            self.tableView_Number.reloadData()
+        } else if(option == "email") {
+            self.tableView_Email.reloadData()
+        }
+    }
+    
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//        
+//        DispatchQueue.main.async {
+//            var frame: CGRect = self.tableView_Address.frame
+//            frame.size.height = self.tableView_Address.contentSize.height
+//            self.tableView_Address.frame = frame
+//            self.view_Address.frame.size.height = self.tableView_Address.contentSize.height + 18
+//            self.stack_Address.frame.size.height = self.tableView_Address.contentSize.height + 18
+//            
+//            frame = self.tableView_Email.frame
+//            frame.size.height = self.tableView_Email.contentSize.height
+//            self.tableView_Email.frame = frame
+//            
+//            frame = self.tableView_Number.frame
+//            frame.size.height = self.tableView_Number.contentSize.height
+//            self.tableView_Number.frame = frame
+//        }
+//    }
     
     /*
     // MARK: - Navigation
