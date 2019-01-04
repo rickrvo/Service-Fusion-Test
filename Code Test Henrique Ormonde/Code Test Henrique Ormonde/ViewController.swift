@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Contacts
 
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
@@ -62,7 +63,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     
-    //    MARK: Button Actions
+    //    MARK: - Button Actions
     
     @IBAction func addPersonTap(_ sender: Any) {
         if(!isChangingView) {
@@ -78,7 +79,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
-    //    MARK: Table View Delegates
+    //    MARK: - Table View Delegates
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return peopleList?.count ?? 0
@@ -106,6 +107,144 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             isChangingView = false
         }
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
+    {
+        let TrashAction = UIContextualAction(style: .destructive, title:  "Delete", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
+            
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            
+            request.predicate = NSPredicate(format: "id = %@", String(self.peopleList[indexPath.row].id))
+            
+            do {
+                let results = try self.context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        if (result.value(forKey: "id") as? String) != nil {
+                            self.context.delete(result)
+                            self.peopleList.remove(at: indexPath.row)
+//                            self.peopleTableView.reloadData()
+                            print("discard person successfull")
+                        }
+                    }
+                }
+            } catch {
+                print("Error loading empty person")
+            }
+            
+            success(true)
+        })
+        TrashAction.image = UIImage(named: "Trash")
+        TrashAction.backgroundColor = .red
+        
+        // Write action code for the More
+        let ShareAction = UIContextualAction(style: .normal, title:  "Share", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
+            
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            
+            request.predicate = NSPredicate(format: "id = %@", String(self.peopleList[indexPath.row].id))
+            
+            do {
+                let results = try self.context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        
+                        // Creating a mutable object to add to the contact
+                        let contact = CNMutableContact()
+                        
+                        contact.imageData = Data()
+                        if let image = result.value(forKey: "image") as? Data {
+                            contact.imageData = image
+                        }
+                        if let firstName = result.value(forKey: "firstName") as? String {
+                            contact.givenName = firstName
+                        }
+                        if let lastName = result.value(forKey: "lastName") as? String {
+                            contact.familyName = lastName
+                        }
+
+                        var emails = [CNLabeledValue<NSString>]()
+                        if let emailList = result.value(forKey: "emails") as? String {
+                            let emailL = emailList.split(separator: ";")
+                            for email in emailL {
+                                let insertEmail = CNLabeledValue(label:CNLabelOther, value:NSString(string: String(email)))
+                                emails.append(insertEmail)
+                            }
+                        }
+                        contact.emailAddresses = emails
+                        
+                        var numbers = [CNLabeledValue<CNPhoneNumber>]()
+                        if let numberList = result.value(forKey: "phoneNumbers") as? String {
+                            let phones = numberList.split(separator: ";")
+                            var main = false
+                            for phone in phones {
+                                if main == false {
+                                    main = true
+                                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMain, value:CNPhoneNumber(stringValue:String(phone)))
+                                    numbers.append(insertNumber)
+                                } else {
+                                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMobile, value:CNPhoneNumber(stringValue:String(phone)))
+                                    numbers.append(insertNumber)
+                                }
+                            }
+                        }
+                        contact.phoneNumbers = numbers
+                        
+                        var addresses = [CNLabeledValue<CNMutablePostalAddress>]()
+                        if let addressList = result.value(forKey: "addresses") as? String {
+                            let addrs = addressList.split(separator: ";")
+                            for addr in addrs {
+                                let homeAddress = CNMutablePostalAddress()
+                                homeAddress.street = String(addr)
+                                let insertAddr = CNLabeledValue(label:CNLabelOther, value:homeAddress)
+                                addresses.append(insertAddr)
+                            }
+                        }
+                        contact.postalAddresses = addresses as! [CNLabeledValue<CNPostalAddress>]
+                        
+                        if let birthday = result.value(forKey: "birthDate") as? Date {
+                            let components = Calendar.current.dateComponents([.year,.month,.day], from: birthday)
+                            contact.birthday = components
+                        }
+                        
+                        
+
+//                        Share Contact
+                        let activityVC = UIActivityViewController(activityItems: [contact], applicationActivities: nil)
+                        
+                        activityVC.popoverPresentationController?.sourceView = self.view
+                        self.present(activityVC, animated: true, completion: nil)
+
+                        
+//                        // Saving the newly created contact
+//                        let store = CNContactStore()
+//                        let saveRequest = CNSaveRequest()
+//                        saveRequest.add(contact, toContainerWithIdentifier:nil)
+//                        try! store.execute(saveRequest)
+//                        
+//                        if (result.value(forKey: "id") as? String) != nil {
+//                            self.context.delete(result)
+//                            self.peopleList.remove(at: indexPath.row)
+//                            //                            self.peopleTableView.reloadData()
+//                            print("discard person successfull")
+//                        }
+                    }
+                }
+            } catch {
+                print("Error loading empty person")
+            }
+            
+            success(true)
+        })
+        ShareAction.image = UIImage(named: "Share")
+        ShareAction.backgroundColor = .gray
+        
+        
+        return UISwipeActionsConfiguration(actions: [TrashAction,ShareAction])
     }
     
     //   MARK: - Navigation

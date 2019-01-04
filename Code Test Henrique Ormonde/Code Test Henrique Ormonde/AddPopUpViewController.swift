@@ -48,7 +48,16 @@ class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
         if txt_value.text == "" || txt_value.text == nil {
             let alert = UIAlertController(title: "Not added", message: "You cannot add an empty field.", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: {
+                self.txt_value.becomeFirstResponder()
+            })
+            return
+        } else if (txt_value.text?.contains(";"))! {
+            let alert = UIAlertController(title: "Invalid input", message: "Invalid character: ;", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: {
+                self.txt_value.becomeFirstResponder()
+            })
             return
         }
         

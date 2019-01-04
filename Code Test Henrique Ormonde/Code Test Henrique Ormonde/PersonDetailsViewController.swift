@@ -29,7 +29,7 @@ class PersonDetailsViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     
-    //    MARK: Table View Delegates
+    //    MARK: - Table View Delegates
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 6

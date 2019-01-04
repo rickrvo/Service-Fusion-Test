@@ -122,7 +122,8 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     @IBAction func but_BackTap(_ sender: Any) {
         
         if ((person?.id) != nil) {
-            if (((txt_firstName?.text) != nil) || txt_firstName?.text == "") || (((txt_lastName?.text) != nil) || txt_lastName?.text == "") {
+            if !(txt_firstName?.text == "" && txt_lastName?.text == "")
+            {
                 // person created successfully
                 print("person edited successfully")
             } else {
@@ -157,7 +158,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     }
     
     
-    // MARK: Text Field Delegates
+    // MARK: - Text Field Delegates
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
@@ -165,13 +166,22 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        if (textField.text?.contains(";"))! {
+            let alert = UIAlertController(title: "Invalid input", message: "Invalid character: ;", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: {
+                textField.becomeFirstResponder()
+            })
+            return
+        }
         if textField.tag == 1 {
 
             if textField.text == "" || textField.text == nil {
                 let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                textField.becomeFirstResponder()
+                self.present(alert, animated: true, completion: {
+                    textField.becomeFirstResponder()
+                })
                 return
             }
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
@@ -200,14 +210,14 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 print("Error loading data")
             }
             
-            
         } else if textField.tag == 2 {
             
             if textField.text == "" || textField.text == nil {
                 let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                textField.becomeFirstResponder()
+                self.present(alert, animated: true, completion: {
+                    textField.becomeFirstResponder()
+                })
                 return
             }
 
@@ -237,12 +247,11 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 print("Error loading data")
             }
         }
-        
         self.view.endEditing(true)
     }
     
     
-//    MARK: Date Action
+//    MARK: - Date Action
     
     @IBAction func birthDay_Change(_ sender: Any) {
         
@@ -258,13 +267,16 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                         
                     result.setValue(date_birthDay.date, forKey: "birthDate")
                     
-                    do{
-                        try context.save()
-                        person = result as? Person
-                        delegate?.userUpdated(contact: person!)
-                        print("update birthday successfull")
-                    } catch {
-                        print("update failed")
+                    if !(txt_firstName?.text == "" && txt_lastName?.text == "")
+                    {
+                        do{
+                            try context.save()
+                            person = result as? Person
+                            delegate?.userUpdated(contact: person!)
+                            print("update birthday successfull")
+                        } catch {
+                            print("update failed")
+                        }
                     }
                 }
             }
@@ -274,7 +286,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     }
     
     
-    // MARK: Button Actions
+    // MARK: - Button Actions
     
     @IBAction func but_addAddress_Tap(_ sender: Any) {
         
@@ -325,7 +337,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         }
     }
     
-    //  MARK: Image Picker Delegates
+    //  MARK: - Image Picker Delegates
     
     func fixOrientation(img: UIImage) -> UIImage {
         if (img.imageOrientation == .up) {
@@ -390,7 +402,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     
     
     
-    //  MARK: Table View Delegates
+    //  MARK: - Table View Delegates
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView.tag == tableView_Address.tag {
@@ -430,7 +442,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     }
     
     
-    //  MARK: AddPopUp Delegates
+    //  MARK: - AddPopUp Delegates
     
     func addedOptionSuccessfull(option: String, contact: Person) {
         if(option == "address") {
