@@ -38,6 +38,11 @@ class AddPopUpViewController: UIViewController, UIGestureRecognizerDelegate {
         self.showAnimate()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.txt_value.becomeFirstResponder()
+    }
     
     @IBAction func cancel_Tap(_ sender: Any) {
         self.removeAnimate()

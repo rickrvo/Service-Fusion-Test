@@ -176,7 +176,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         }
         if textField.tag == 1 {
 
-            if textField.text == "" || textField.text == nil {
+            if txt_firstName.text == "" && txt_lastName.text == "" {
                 let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
                 self.present(alert, animated: true, completion: {
@@ -212,7 +212,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             
         } else if textField.tag == 2 {
             
-            if textField.text == "" || textField.text == nil {
+            if txt_firstName.text == "" && txt_lastName.text == "" {
                 let alert = UIAlertController(title: "Alert", message: "First name or last name is required.", preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
                 self.present(alert, animated: true, completion: {

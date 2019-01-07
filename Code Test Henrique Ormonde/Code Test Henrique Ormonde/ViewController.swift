@@ -225,10 +225,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         }
                         
                         
-
-//                        Share Contact
-                        let activityVC = UIActivityViewController(activityItems: [contact], applicationActivities: nil)
                         
+//                        Share Contact
+                        let fileManager = FileManager.default
+                        let cacheDirectory = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                        
+                        let fileLocation = cacheDirectory.appendingPathComponent("\(CNContactFormatter().string(from: contact)!).vcf")
+                        
+                        let contactData = try! CNContactVCardSerialization.data(with: [contact])
+                        do {
+                            try contactData.write(to: fileLocation.absoluteURL, options: .atomicWrite)
+                        } catch {
+                            print("Error saving contact to share")
+                        }
+                        
+                        let activityVC = UIActivityViewController(activityItems: [fileLocation], applicationActivities: nil)
                         activityVC.popoverPresentationController?.sourceView = self.view
                         self.present(activityVC, animated: true, completion: nil)
 
