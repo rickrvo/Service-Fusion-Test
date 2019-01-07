@@ -11,7 +11,7 @@ import CoreData
 import Contacts
 
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, OptionsPopUpViewControllerDelegate {
     
     @IBOutlet weak var peopleTableView: UITableView!
     @IBOutlet weak var but_MoreOptions: UIButton!
@@ -76,6 +76,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func optionsTap(_ sender: Any) {
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "optionsPopUpID") as! OptionsPopUpViewController
+        
+        popupVC.delegate = self
+        
+        self.addChild(popupVC)
+        popupVC.view.frame = self.view.frame
+        self.view.addSubview(popupVC.view)
+        popupVC.didMove(toParent: self)
     }
     
     
@@ -123,11 +131,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 if results.count > 0 {
                     for result in results as! [NSManagedObject] {
                         
-                        if (result.value(forKey: "id") as? String) != nil {
+                        if (result.value(forKey: "id") as? Int32) != nil {
                             self.context.delete(result)
                             self.peopleList.remove(at: indexPath.row)
 //                            self.peopleTableView.reloadData()
-                            print("discard person successfull")
+                            do {
+                                try self.context.save()
+                                print("discard person successfull")
+                            } catch {
+                                print("Error deleting person")
+                            }
                         }
                     }
                 }
@@ -245,6 +258,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         
         return UISwipeActionsConfiguration(actions: [TrashAction,ShareAction])
+    }
+    
+    
+    //   MARK: - Options Popup Delegates
+    
+    func backupImportedSuccessfully() {
+        self.viewDidAppear(false)
     }
     
     //   MARK: - Navigation
