@@ -1,0 +1,6 @@
+framework module Pods_Code_Test_Henrique_Ormonde {
+  umbrella header "Pods-Code Test Henrique Ormonde-umbrella.h"
+
+  export *
+  module * { export * }
+}
