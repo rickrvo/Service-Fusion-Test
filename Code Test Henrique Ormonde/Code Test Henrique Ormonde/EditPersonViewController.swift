@@ -37,6 +37,8 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     @IBOutlet weak var tableView_Email: UITableView!
     
 
+    // MARK: Controller Funcs
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -117,17 +119,9 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     @IBAction func but_BackTap(_ sender: Any) {
         
         if ((person?.id) != nil) {
-            if !(txt_firstName?.text == "" && txt_lastName?.text == "")
-            {
-                // person created successfully
-                do {
-                    try context.save()
-                } catch {
-                    print("Error saving newPerson")
-                }
-                print("person edited successfully")
-            } else {
-                
+            if (person?.emails == "") &&
+                (person?.phoneNumbers == "") &&
+                (txt_firstName?.text == "" && txt_lastName?.text == "") {
                 let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
                 request.returnsObjectsAsFaults = false
                 
@@ -144,6 +138,34 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 } catch {
                     print("Error loading empty person")
                 }
+                self.navigationController?.popViewController(animated: true)
+                return
+            }
+            if person?.phoneNumbers == nil || person?.phoneNumbers == "" {
+                let alert = UIAlertController(title: "Missing phone Number", message: "Please add at least 1 phone number.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            } else if person?.emails == nil || person?.emails == "" {
+                let alert = UIAlertController(title: "Missing email", message: "Please add at least 1 email.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            if !(txt_firstName?.text == "" && txt_lastName?.text == "")
+            {
+                // person created successfully
+                do {
+                    try context.save()
+                } catch {
+                    print("Error saving newPerson")
+                }
+                print("person edited successfully")
+            } else {
+                let alert = UIAlertController(title: "Missing name", message: "Please add first or last name.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
             }
         }
         
@@ -152,6 +174,29 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
  
     @IBAction func background_Tap(_ sender: Any) {
         self.view.endEditing(true)
+    }
+    
+    @IBAction func but_Delete_Tap(_ sender: Any) {
+        
+        if ((person?.id) != nil) {
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            
+            request.predicate = NSPredicate(format: "id == %i", person!.id)
+            
+            do {
+                let results = try context.fetch(request)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        context.delete(result)
+                        print("discard person successfull")
+                    }
+                }
+            } catch {
+                print("Error loading empty person")
+            }
+        }
+        self.navigationController?.popViewController(animated: true)
     }
     
     
@@ -284,6 +329,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
     
     
     // MARK: - Button Actions
+    
     
     @IBAction func but_addAddress_Tap(_ sender: Any) {
         

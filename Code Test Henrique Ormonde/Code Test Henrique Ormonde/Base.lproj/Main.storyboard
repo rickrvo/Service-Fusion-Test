@@ -394,11 +394,20 @@
                                                             <action selector="but_Avatar_Tap:" destination="oHu-nC-qzj" eventType="touchUpInside" id="aYo-dP-ltf"/>
                                                         </connections>
                                                     </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yDh-yT-uea">
+                                                        <rect key="frame" x="334" y="8" width="30" height="30"/>
+                                                        <state key="normal" image="Trash"/>
+                                                        <connections>
+                                                            <action selector="but_Delete_Tap:" destination="oHu-nC-qzj" eventType="touchUpInside" id="8lb-6v-PQD"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="LIj-2G-7Jd" secondAttribute="trailing" id="4Ad-QV-EE9"/>
+                                                    <constraint firstItem="yDh-yT-uea" firstAttribute="top" secondItem="xNv-eA-RJq" secondAttribute="top" constant="8" id="90A-i6-mdD"/>
                                                     <constraint firstItem="LIj-2G-7Jd" firstAttribute="top" secondItem="xNv-eA-RJq" secondAttribute="top" id="E70-wT-9aB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="yDh-yT-uea" secondAttribute="trailing" constant="11" id="Gjs-He-mRF"/>
                                                     <constraint firstItem="Gmi-LY-qEP" firstAttribute="centerY" secondItem="Ebj-NL-0WV" secondAttribute="centerY" id="SHd-hA-bpr"/>
                                                     <constraint firstAttribute="bottom" secondItem="Ebj-NL-0WV" secondAttribute="bottom" id="XEH-hD-H9p"/>
                                                     <constraint firstAttribute="trailing" secondItem="Ebj-NL-0WV" secondAttribute="trailing" id="cFZ-8n-ZSd"/>
@@ -873,6 +882,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Trash" width="30" height="30"/>
         <image name="back.png" width="18" height="41"/>
         <image name="default_avatar" width="88" height="88"/>
         <image name="edit.png" width="88" height="88"/>
