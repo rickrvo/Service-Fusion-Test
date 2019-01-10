@@ -52,7 +52,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
 
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
-            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+            request.predicate = NSPredicate(format: "id == %i", person!.id)
             
             do {
                 let results = try context.fetch(request)
@@ -108,11 +108,6 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             newPerson.setValue(Date(), forKey: "birthDate")
             newPerson.setValue(nil, forKey: "image")
             person = newPerson as? Person
-            do {
-                try context.save()
-            } catch {
-                print("Error saving newPerson")
-            }
             
             self.img_Avatar.image = UIImage(named: "default_avatar")
         }
@@ -125,23 +120,25 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             if !(txt_firstName?.text == "" && txt_lastName?.text == "")
             {
                 // person created successfully
+                do {
+                    try context.save()
+                } catch {
+                    print("Error saving newPerson")
+                }
                 print("person edited successfully")
             } else {
                 
                 let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
                 request.returnsObjectsAsFaults = false
                 
-                request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+                request.predicate = NSPredicate(format: "id == %i", person!.id)
                 
                 do {
                     let results = try context.fetch(request)
                     if results.count > 0 {
                         for result in results as! [NSManagedObject] {
-                            
-                            if (result.value(forKey: "id") as? String) != nil {
-                                context.delete(result)
-                                print("discard person successfull")
-                            }
+                            context.delete(result)
+                            print("discard person successfull")
                         }
                     }
                 } catch {
@@ -187,7 +184,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
             
-            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+            request.predicate = NSPredicate(format: "id == %i", person!.id)
             
             do {
                 let results = try context.fetch(request)
@@ -224,7 +221,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
             
-            request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+            request.predicate = NSPredicate(format: "id == %i", person!.id)
             
             do {
                 let results = try context.fetch(request)
@@ -258,7 +255,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
         request.returnsObjectsAsFaults = false
         
-        request.predicate = NSPredicate(format: "id = %@", String(person!.id))
+        request.predicate = NSPredicate(format: "id == %i", person!.id)
         
         do {
             let results = try context.fetch(request)
@@ -362,7 +359,7 @@ class EditPersonViewController: UIViewController, UITextFieldDelegate, UITableVi
                 let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
                 request.returnsObjectsAsFaults = false
                 
-                request.predicate = NSPredicate(format: "id = %@", String(self.person!.id))
+                request.predicate = NSPredicate(format: "id == %i", self.person!.id)
                 
                 do {
                     let results = try self.context.fetch(request)

@@ -11,16 +11,20 @@ import CoreData
 import Contacts
 
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, OptionsPopUpViewControllerDelegate {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate, OptionsPopUpViewControllerDelegate {
     
     @IBOutlet weak var peopleTableView: UITableView!
     @IBOutlet weak var but_MoreOptions: UIButton!
     @IBOutlet weak var but_AddPerson: UIButton!
     @IBOutlet weak var txt_Search: UITextField!
     @IBOutlet weak var lbl_NoContacts: UILabel!
+    @IBOutlet weak var lbl_NoResults: UILabel!
     
     var peopleList: [Person]!
+    var peopleListSearch: [Person]!
     var context: NSManagedObjectContext!
+    
+    var isSearchMode: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +33,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         self.context = appDelegate.persistentContainer.viewContext
+        
+        self.txt_Search.addTarget(self, action: #selector(searchFieldDidChange(_:)), for: UIControl.Event.editingChanged)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -66,6 +72,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //    MARK: - Button Actions
     
     @IBAction func addPersonTap(_ sender: Any) {
+        self.view.endEditing(true)
         if(!isChangingView) {
             isChangingView = true
             
@@ -76,29 +83,45 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func optionsTap(_ sender: Any) {
-        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "optionsPopUpID") as! OptionsPopUpViewController
-        
-        popupVC.delegate = self
-        
-        self.addChild(popupVC)
-        popupVC.view.frame = self.view.frame
-        self.view.addSubview(popupVC.view)
-        popupVC.didMove(toParent: self)
+        self.view.endEditing(true)
+        if(!isChangingView) {
+            isChangingView = true
+            
+            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "optionsPopUpID") as! OptionsPopUpViewController
+            
+            popupVC.delegate = self
+            
+            self.addChild(popupVC)
+            popupVC.view.frame = self.view.frame
+            self.view.addSubview(popupVC.view)
+            popupVC.didMove(toParent: self)
+            
+            isChangingView = false
+        }
     }
     
     
     //    MARK: - Table View Delegates
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return peopleList?.count ?? 0
+        if isSearchMode == false {
+            return peopleList?.count ?? 0
+        } else {
+            return peopleListSearch?.count ?? 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "personCell", for: indexPath) as! PersonTableViewCell
         
-        cell.lbl_Name.text = peopleList[indexPath.row].firstName! + " " + peopleList[indexPath.row].lastName!
-        cell.img_Avatar.image = UIImage(data: peopleList[indexPath.row].image ?? (UIImage(named: "default_avatar")?.pngData())!)
+        if isSearchMode == false {
+            cell.lbl_Name.text = peopleList[indexPath.row].firstName! + " " + peopleList[indexPath.row].lastName!
+            cell.img_Avatar.image = UIImage(data: peopleList[indexPath.row].image ?? (UIImage(named: "default_avatar")?.pngData())!)
+        } else {
+            cell.lbl_Name.text = peopleListSearch[indexPath.row].firstName! + " " + peopleListSearch[indexPath.row].lastName!
+            cell.img_Avatar.image = UIImage(data: peopleListSearch[indexPath.row].image ?? (UIImage(named: "default_avatar")?.pngData())!)
+        }
         
         return cell
     }
@@ -124,7 +147,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
             
-            request.predicate = NSPredicate(format: "id = %@", String(self.peopleList[indexPath.row].id))
+            request.predicate = NSPredicate(format: "id == %i", self.peopleList[indexPath.row].id)
             
             do {
                 let results = try self.context.fetch(request)
@@ -159,7 +182,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
             request.returnsObjectsAsFaults = false
             
-            request.predicate = NSPredicate(format: "id = %@", String(self.peopleList[indexPath.row].id))
+            request.predicate = NSPredicate(format: "id == %i", self.peopleList[indexPath.row].id)
             
             do {
                 let results = try self.context.fetch(request)
@@ -167,72 +190,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     for result in results as! [NSManagedObject] {
                         
                         // Creating a mutable object to add to the contact
-                        let contact = CNMutableContact()
-                        
-                        contact.imageData = Data()
-                        if let image = result.value(forKey: "image") as? Data {
-                            contact.imageData = image
-                        }
-                        if let firstName = result.value(forKey: "firstName") as? String {
-                            contact.givenName = firstName
-                        }
-                        if let lastName = result.value(forKey: "lastName") as? String {
-                            contact.familyName = lastName
-                        }
-
-                        var emails = [CNLabeledValue<NSString>]()
-                        if let emailList = result.value(forKey: "emails") as? String {
-                            let emailL = emailList.split(separator: ";")
-                            for email in emailL {
-                                let insertEmail = CNLabeledValue(label:CNLabelOther, value:NSString(string: String(email)))
-                                emails.append(insertEmail)
-                            }
-                        }
-                        contact.emailAddresses = emails
-                        
-                        var numbers = [CNLabeledValue<CNPhoneNumber>]()
-                        if let numberList = result.value(forKey: "phoneNumbers") as? String {
-                            let phones = numberList.split(separator: ";")
-                            var main = false
-                            for phone in phones {
-                                if main == false {
-                                    main = true
-                                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMain, value:CNPhoneNumber(stringValue:String(phone)))
-                                    numbers.append(insertNumber)
-                                } else {
-                                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMobile, value:CNPhoneNumber(stringValue:String(phone)))
-                                    numbers.append(insertNumber)
-                                }
-                            }
-                        }
-                        contact.phoneNumbers = numbers
-                        
-                        var addresses = [CNLabeledValue<CNMutablePostalAddress>]()
-                        if let addressList = result.value(forKey: "addresses") as? String {
-                            let addrs = addressList.split(separator: ";")
-                            for addr in addrs {
-                                let homeAddress = CNMutablePostalAddress()
-                                homeAddress.street = String(addr)
-                                let insertAddr = CNLabeledValue(label:CNLabelOther, value:homeAddress)
-                                addresses.append(insertAddr)
-                            }
-                        }
-                        contact.postalAddresses = addresses as! [CNLabeledValue<CNPostalAddress>]
-                        
-                        if let birthday = result.value(forKey: "birthDate") as? Date {
-                            let components = Calendar.current.dateComponents([.year,.month,.day], from: birthday)
-                            contact.birthday = components
-                        }
-                        
+                        let contact = result.toContact()
                         
                         
 //                        Share Contact
                         let fileManager = FileManager.default
                         let cacheDirectory = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                         
-                        let fileLocation = cacheDirectory.appendingPathComponent("\(CNContactFormatter().string(from: contact)!).vcf")
+                        let fileLocation = cacheDirectory.appendingPathComponent("\(CNContactFormatter().string(from: contact!)!).vcf")
                         
-                        let contactData = try! CNContactVCardSerialization.data(with: [contact])
+                        let contactData = try! CNContactVCardSerialization.data(with: [contact!])
                         do {
                             try contactData.write(to: fileLocation.absoluteURL, options: .atomicWrite)
                         } catch {
@@ -274,8 +241,90 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //   MARK: - Options Popup Delegates
     
-    func backupImportedSuccessfully() {
+    @objc func backupImportedSuccessfully() {
         self.viewDidAppear(false)
+    }
+    
+    
+    //   MARK: - Search Functions
+    
+    @objc func searchFieldDidChange(_ textField: UITextField) {
+        if txt_Search.text == "" {
+            isSearchMode = false
+            lbl_NoResults.isHidden = true
+            if peopleList.count > 0 {
+                lbl_NoContacts.isHidden = true
+            } else {
+                lbl_NoContacts.isHidden = false
+                peopleTableView.isHidden = true
+            }
+            self.view.updateConstraintsIfNeeded()
+        } else {
+            isSearchMode = true
+            lbl_NoContacts.isHidden = true
+            peopleTableView.isHidden = false
+            
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+            request.returnsObjectsAsFaults = false
+            request.predicate = NSPredicate(format: "(firstName CONTAINS[c] %@) OR (lastName CONTAINS[c] %@) OR (phoneNumbers CONTAINS[c] %@) OR (emails CONTAINS[c] %@) OR (addresses CONTAINS[c] %@)", self.txt_Search.text!, self.txt_Search.text!, self.txt_Search.text!, self.txt_Search.text!, self.txt_Search.text!)
+            
+            do {
+                let results = try context.fetch(request)
+                if peopleListSearch == nil {
+                    peopleListSearch = [Person]()
+                } else {
+                    peopleListSearch.removeAll()
+                }
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        peopleListSearch?.append(result as! Person)
+                    }
+                    lbl_NoResults.isHidden = true
+                } else {
+                    lbl_NoResults.isHidden = false
+                }
+            } catch {
+                print("Error loading people list")
+            }
+        }
+        peopleTableView.reloadData()
+    }
+    
+    @IBAction func background_Tap(_ sender: Any) {
+        self.view.endEditing(true)
+//        peopleTableView.reloadData()
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view == self.view {
+            return true
+        }
+        return false
+    }
+    
+    // MARK: - Text Field Delegates
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        peopleTableView.reloadData()
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if (textField.text?.contains(";"))! {
+            let alert = UIAlertController(title: "Invalid input", message: "Invalid character: ;", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: {
+                textField.becomeFirstResponder()
+            })
+            return
+        }
+        
+        self.view.endEditing(true)
+        if txt_Search.text == "" {
+            isSearchMode = false
+        }
+        peopleTableView.reloadData()
     }
     
     //   MARK: - Navigation

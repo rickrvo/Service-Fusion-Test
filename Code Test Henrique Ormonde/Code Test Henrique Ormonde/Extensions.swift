@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Foundation
+import Contacts
 
 
 extension NSManagedObject {
@@ -24,9 +25,9 @@ extension NSManagedObject {
             dict["birthDate"] = stringDate
         }
         
-        if dict["image"] != nil {
-            dict["image"] = String(data: dict["image"] as! Data, encoding: .utf8)
-        }
+//        if dict["image"] != nil {
+//            dict["image"] = String(data: dict["image"] as! Data, encoding: .utf8)
+//        }
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
@@ -35,6 +36,68 @@ extension NSManagedObject {
         }
         catch{}
         return nil
+    }
+    
+    func toContact() -> CNContact? {
+        // Creating a mutable object to add to the contact
+        let contact = CNMutableContact()
+        
+        contact.imageData = Data()
+        if let image = self.value(forKey: "image") as? Data {
+            contact.imageData = image
+        }
+        if let firstName = self.value(forKey: "firstName") as? String {
+            contact.givenName = firstName
+        }
+        if let lastName = self.value(forKey: "lastName") as? String {
+            contact.familyName = lastName
+        }
+        
+        var emails = [CNLabeledValue<NSString>]()
+        if let emailList = self.value(forKey: "emails") as? String {
+            let emailL = emailList.split(separator: ";")
+            for email in emailL {
+                let insertEmail = CNLabeledValue(label:CNLabelOther, value:NSString(string: String(email)))
+                emails.append(insertEmail)
+            }
+        }
+        contact.emailAddresses = emails
+        
+        var numbers = [CNLabeledValue<CNPhoneNumber>]()
+        if let numberList = self.value(forKey: "phoneNumbers") as? String {
+            let phones = numberList.split(separator: ";")
+            var main = false
+            for phone in phones {
+                if main == false {
+                    main = true
+                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMain, value:CNPhoneNumber(stringValue:String(phone)))
+                    numbers.append(insertNumber)
+                } else {
+                    let insertNumber = CNLabeledValue(label:CNLabelPhoneNumberMobile, value:CNPhoneNumber(stringValue:String(phone)))
+                    numbers.append(insertNumber)
+                }
+            }
+        }
+        contact.phoneNumbers = numbers
+        
+        var addresses = [CNLabeledValue<CNMutablePostalAddress>]()
+        if let addressList = self.value(forKey: "addresses") as? String {
+            let addrs = addressList.split(separator: ";")
+            for addr in addrs {
+                let homeAddress = CNMutablePostalAddress()
+                homeAddress.street = String(addr)
+                let insertAddr = CNLabeledValue(label:CNLabelOther, value:homeAddress)
+                addresses.append(insertAddr)
+            }
+        }
+        contact.postalAddresses = addresses as! [CNLabeledValue<CNPostalAddress>]
+        
+        if let birthday = self.value(forKey: "birthDate") as? Date {
+            let components = Calendar.current.dateComponents([.year,.month,.day], from: birthday)
+            contact.birthday = components
+        }
+        
+        return contact as CNContact
     }
 }
 

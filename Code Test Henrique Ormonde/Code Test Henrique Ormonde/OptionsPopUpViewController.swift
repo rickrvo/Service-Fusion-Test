@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Contacts
 
 protocol OptionsPopUpViewControllerDelegate: class {
     func backupImportedSuccessfully()
@@ -74,15 +75,23 @@ class OptionsPopUpViewController: UIViewController, UIGestureRecognizerDelegate 
         do {
             let results = try context.fetch(request)
             if results.count > 0 {
-                var jsonStr:String = ""
+//                var jsonStr:String = ""
+                var peopleList: [CNContact] = []
                 for result in results as! [NSManagedObject] {
-                    let peep:Person = (result as! Person)
-                    let json = peep.toJSON()
-                    jsonStr.append(json!)
+//                    let peep:Person = (result as! Person)
+//                    let json = peep.toJSON()
+//                    jsonStr.append(json!)
+                    peopleList.append(result.toContact()!)
                 }
-                let fileName = "Contacts.csv"
+                
+                
+                let fileName = "Contacts.vcf"
                 let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-                try jsonStr.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
+                let data: NSData?
+                try data = CNContactVCardSerialization.data(with: peopleList) as NSData
+                
+//                try jsonStr.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
+                try data?.write(to: path!, options: .atomic)
                 
                 let vc = UIActivityViewController(activityItems: [path as Any], applicationActivities: [])
                 vc.excludedActivityTypes = [

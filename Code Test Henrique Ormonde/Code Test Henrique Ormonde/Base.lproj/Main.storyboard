@@ -34,11 +34,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="HRS-yU-78l">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="HRS-yU-78l">
                                 <rect key="frame" x="16" y="60" width="343" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="search"/>
                                 <connections>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Q2i-5e-Yzq"/>
                                 </connections>
@@ -116,8 +116,15 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No results" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9g-Er-cwv">
+                                <rect key="frame" x="16" y="98" width="343" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="ACC-Om-wp3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="0t1-jJ-0f8"/>
                             <constraint firstItem="HRS-yU-78l" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="3lS-r3-Gb2"/>
@@ -125,6 +132,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="7pO-6t-Kim" secondAttribute="bottom" id="BgL-0n-bWJ"/>
                             <constraint firstItem="ACC-Om-wp3" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="Bwd-R4-k30"/>
                             <constraint firstItem="pjH-WL-SP7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="LEw-13-cwV"/>
+                            <constraint firstItem="R9g-Er-cwv" firstAttribute="top" secondItem="HRS-yU-78l" secondAttribute="bottom" constant="8" id="Lsz-cg-5et"/>
                             <constraint firstItem="HRS-yU-78l" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="40" id="NCy-oy-pgp"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HRS-yU-78l" secondAttribute="trailing" constant="16" id="NEX-lo-FAg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ACC-Om-wp3" secondAttribute="trailing" constant="16" id="OYU-dc-gtr"/>
@@ -132,16 +140,22 @@
                             <constraint firstItem="7pO-6t-Kim" firstAttribute="top" secondItem="HRS-yU-78l" secondAttribute="bottom" constant="8" id="VL9-Sc-Rvi"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="7pO-6t-Kim" secondAttribute="trailing" id="VTw-fc-bAq"/>
                             <constraint firstItem="ACC-Om-wp3" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="YGh-KN-2eC"/>
+                            <constraint firstItem="R9g-Er-cwv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="ofi-6A-h5Q"/>
                             <constraint firstItem="OvW-ZP-y6P" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="rDH-NV-cVF"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="R9g-Er-cwv" secondAttribute="trailing" constant="16" id="vsa-Tz-8m7"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="pjH-WL-SP7" secondAttribute="trailing" constant="16" id="x0p-nu-aFH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="zfJ-rG-Fj6" appends="YES" id="NE6-37-wwP"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" id="AdV-bE-MGh"/>
                     <connections>
                         <outlet property="but_AddPerson" destination="pjH-WL-SP7" id="bgZ-nG-Yma"/>
                         <outlet property="but_MoreOptions" destination="OvW-ZP-y6P" id="YUj-M7-9HL"/>
                         <outlet property="lbl_NoContacts" destination="ACC-Om-wp3" id="qwW-Vf-ZgZ"/>
+                        <outlet property="lbl_NoResults" destination="R9g-Er-cwv" id="Dvj-aQ-Ua2"/>
                         <outlet property="peopleTableView" destination="7pO-6t-Kim" id="Ymp-m1-i8V"/>
                         <outlet property="txt_Search" destination="HRS-yU-78l" id="xxk-QU-gqg"/>
                         <segue destination="E1J-cP-4gj" kind="show" identifier="personSegue" id="cJq-0x-hBk"/>
@@ -149,8 +163,14 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="zfJ-rG-Fj6">
+                    <connections>
+                        <action selector="background_Tap:" destination="BYZ-38-t0r" id="jSO-aB-zcw"/>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="Jpd-ac-Wfz"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="199" y="-272"/>
+            <point key="canvasLocation" x="197.59999999999999" y="-272.11394302848578"/>
         </scene>
         <!--Person Details View Controller-->
         <scene sceneID="2MX-OF-bOC">
@@ -288,26 +308,21 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EsQ-Dk-7bK">
                                 <rect key="frame" x="0.0" y="479" width="375" height="188"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ttz-Zu-JJa">
-                                        <rect key="frame" x="132" y="49" width="111" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ttz-Zu-JJa">
+                                        <rect key="frame" x="119" y="79" width="137" height="30"/>
                                         <state key="normal" title="Export Contacts"/>
                                         <connections>
                                             <action selector="but_Export_Tap:" destination="MJo-qi-GZW" eventType="touchUpInside" id="dPF-Ri-1hY"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OMm-o3-gZP">
-                                        <rect key="frame" x="132" y="114" width="112" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                                        <state key="normal" title="Import Contacts"/>
-                                        <connections>
-                                            <action selector="but_Import_Tap:" destination="MJo-qi-GZW" eventType="touchUpInside" id="FeA-DE-j8G"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="ttz-Zu-JJa" secondAttribute="bottom" constant="79" id="CYP-tZ-IL7"/>
+                                    <constraint firstItem="ttz-Zu-JJa" firstAttribute="top" secondItem="EsQ-Dk-7bK" secondAttribute="top" constant="79" id="Hdo-b8-4Ca"/>
+                                    <constraint firstItem="ttz-Zu-JJa" firstAttribute="leading" secondItem="EsQ-Dk-7bK" secondAttribute="leading" constant="119" id="cSB-y1-mTn"/>
                                     <constraint firstAttribute="height" constant="188" id="nJZ-iP-Xdl"/>
+                                    <constraint firstAttribute="trailing" secondItem="ttz-Zu-JJa" secondAttribute="trailing" constant="119" id="qvY-sY-62Z"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -325,7 +340,6 @@
                     </view>
                     <connections>
                         <outlet property="but_Export" destination="ttz-Zu-JJa" id="Aog-ec-VZ0"/>
-                        <outlet property="but_Import" destination="OMm-o3-gZP" id="wEb-JK-Efn"/>
                         <outlet property="viewBackground" destination="EsQ-Dk-7bK" id="jHn-Lg-c7o"/>
                         <outlet property="viewBackgroundTransparent" destination="MiD-wE-d6S" id="icr-8F-5L8"/>
                     </connections>
@@ -338,7 +352,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="198" y="-937"/>
+            <point key="canvasLocation" x="197.59999999999999" y="-937.78110944527748"/>
         </scene>
         <!--Edit Person View Controller-->
         <scene sceneID="ahk-og-LAW">
